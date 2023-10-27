@@ -1,8 +1,6 @@
-const baseUrl = `https://covid-193.p.rapidapi.com/statistics`;
 async function fetchDataByCountry(country) {
-  clearDataElement();
-
-  const url = '${baseUrl}?country=${country}';
+  // clearDataElement();
+  const baseUrl = `https://covid-193.p.rapidapi.com/statistics?country=${country}`;
 
   const options = {
     method: 'GET',
@@ -13,28 +11,37 @@ async function fetchDataByCountry(country) {
   };
 
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(baseUrl, options);
     const result = await response.text();
-    console.log(result);
     const obj = JSON.parse(result);
-    const kasusAktif = obj.response[0].cases.active;
+    const data = obj.response[0];
 
-    document.getElementById('activeCases').textContent = `Active Cases = ${kasusAktif}`;
-    document.getElementById('newCase').textContent = `New Cases = ${obj.response[0].cases.new}`;
-    document.getElementById('recoveredCases').textContent = `Recovered Cases = ${obj.response[0].cases.recovered}`;
-    document.getElementById('totalCases').textContent = `Total Cases = ${obj.response[0].cases.total}`;
-    document.getElementById('totalDeaths').textContent = `Total Deaths = ${obj.response[0].deaths.total}`;
-    document.getElementById('totalTests').textContent = `Total Tests = ${obj.response[0].tests.total}`;
+    const kasusAktif = data["cases"]["recovered"];
+    const kasusBaru = data["cases"]["new"];
+    const kasusPulih = data["cases"]["recovered"];
+    const totalKasus = data["cases"]["total"];
+    const totalKematian = data["deaths"]["total"];
+    const totalTest = data["tests"]["total"];
+
+    document.getElementById('activeCases').textContent = `${kasusAktif}`;
+    document.getElementById('newCases').textContent = `${kasusBaru}`;
+    document.getElementById('recoveredCases').textContent = `${kasusPulih}`;
+    document.getElementById('totalCases').textContent = `${totalKasus}`;
+    document.getElementById('totalDeaths').textContent = `${totalKematian}`;
+    document.getElementById('totalTests').textContent = `${totalTest}`;
+    console.log(result);
   } catch (error) {
     console.error(error);
   }
 }
 
-document.getElementById('countryInput').addEventListener('submit', function (event) {
+document.getElementById('searchForm').addEventListener('submit', function (event) {
   event.preventDefault();
   const countryInput = document.getElementById('negara').value;
-  fetchDataByCountry(countryInput);
-});
 
-fetchDataByCountry('indonesia');
-
+  if (countryInput == "") {
+    alert("please input country name!")
+  } else {
+    fetchDataByCountry(countryInput);
+  }
+})
