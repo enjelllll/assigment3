@@ -1,6 +1,9 @@
+const baseUrl = `https://covid-193.p.rapidapi.com/statistics`;
+async function fetchDataByCountry(country) {
+  clearDataElement();
 
-async function fetchDataAndUpdate(country) {
-  const url = `https://covid-193.p.rapidapi.com/countries=${country}`;
+  const url = '${baseUrl}?country=${country}';
+
   const options = {
     method: 'GET',
     headers: {
@@ -11,8 +14,8 @@ async function fetchDataAndUpdate(country) {
 
   try {
     const response = await fetch(url, options);
-    console.log(response)
     const result = await response.text();
+    console.log(result);
     const obj = JSON.parse(result);
     const kasusAktif = obj.response[0].cases.active;
 
@@ -30,8 +33,8 @@ async function fetchDataAndUpdate(country) {
 document.getElementById('countryInput').addEventListener('submit', function (event) {
   event.preventDefault();
   const countryInput = document.getElementById('negara').value;
-  fetchDataAndUpdate(countryInput);
+  fetchDataByCountry(countryInput);
 });
 
-fetchDataAndUpdate('indonesia');
+fetchDataByCountry('indonesia');
 
